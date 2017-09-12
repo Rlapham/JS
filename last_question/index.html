@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>tooearlyfortitles</title>
+    <script src="libraries/p5.js" type="text/javascript"></script>
+    <script src="libraries/p5.dom.js" type="text/javascript"></script>
+    <script src="libraries/p5.sound.js" type="text/javascript"></script>
+    <script src="libraries/rita-full.js" /></script>
+    <script src="sketch.js" type="text/javascript"></script>
+    <script src="libraries/dom-to-image.min.js" />
+    <script>
+      domtoimage.toPng(node)
+    </script>
+
+    <style>
+      body {
+        padding: 20px;
+        background-image: url("stars.jpg");
+        weight: 600;
+        text-size: 28pt;
+        color: #ffffff;
+      }
+
+      h1{
+      text-align: center;
+      font-family: "Helvetica";
+      color: #ffffff;
+	     font-size: 24px;
+	     font-style: normal;
+	     font-variant: normal;
+	     font-weight: 500;
+	      line-height: 26.4px;
+     }
+     p{
+     text-align: center;
+     font-family: "Helvetica";
+     color: #ffffff;
+     font-size: 16px;
+     font-style: normal;
+     font-variant: normal;
+     font-weight: 300;
+      line-height: 26.4px;
+    }
+
+    p2 {
+      text-align: center;
+      font-family: "Helvetica";
+      color: #ffffff;
+      font-size: 20px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: 300;
+      line-height: 26.4px;
+
+    }
+
+    .pear {
+      position: relative;
+      margin: auto;
+      width: 60%;
+      top: 200px;
+      padding: 20px;
+      margin-top: 300px;
+      margin-bottom: 40px;
+      margin-left: 20%;
+      margin-right: 20%;
+      border: dashed;
+      border-spacing: 5px 40px !important;
+    }
+
+
+      .canvas{
+        position: relative;
+        float: left;
+        top: 200px;
+        width: 100%;
+        padding-left: 25%;
+        padding-right: 25%;*/
+        margin-left: 33%;
+        margin-right: 33%;
+      }
+
+      .file {
+        position: absolute;
+        top: 100px;
+        padding-left: 20%;
+        font-weight: bold;
+      }
+
+      .text {
+        position: absolute;
+        border-style: solid;
+        border-width: 1px;
+        padding: 20px;
+      }
+
+      #drop_zone {
+        position: relative;
+        padding: 0px;
+        border-style: dotted;
+        top: 45px;
+        width: 60%;
+        height: 100px;
+        margin-left: 20%;
+        margin-right: 20%;
+        text-align: center;
+        background: grey;
+        z-index: 999;
+      }
+
+    </style>
+
+  </head>
+  <body background="stars.jpg">
+
+    <h1>Last Question</h1>
+
+    <p>Drag and drop an image into the dropzone</a>. <br> The pixel values of the image determine the word choice selected from the text of Issac Asimov's short story, "The Last Question".</p>
+
+  </body>
+</html>
