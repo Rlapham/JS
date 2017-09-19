@@ -18,6 +18,8 @@
 
     <style>
       body {
+        position: relative;
+        display: block;
         padding: 20px;
         background-image: url("bgText3.jpg");
         weight: 600;
@@ -26,6 +28,8 @@
       }
 
       h1{
+        position: relative;
+        display: block;
       text-align: center;
       font-family: "Helvetica";
       color: #ffffff;
@@ -35,7 +39,24 @@
 	     font-weight: 500;
 	      line-height: 26.4px;
      }
+
+     #drop_zone {
+       position: relative;
+       display: block;
+       margin: 30px;
+       border-style: dotted;
+       top: -420px;
+       width: 20%;
+       height: 100px;
+       margin-left: 40%;
+       margin-right: 40%;
+       text-align: center;
+       background: grey;
+       z-index: 999;
+     }
+
      p{
+    position: relative;
      text-align: center;
      font-family: "Helvetica";
      color: #ffffff;
@@ -47,6 +68,7 @@
     }
 
     p2 {
+      position: relative;
       text-align: center;
       font-family: "Helvetica";
       color: #ffffff;
@@ -84,21 +106,6 @@
         padding: 20px;
       }
 
-      #drop_zone {
-        position: absolute;
-        display: block;
-        padding: 0px;
-        border-style: dotted;
-        top: 13%;
-        width: 20%;
-        height: 100px;
-        margin-left: 40%;
-        margin-right: 40%;
-        text-align: center;
-        background: grey;
-        z-index: 999;
-      }
-
       .drawing{
         position: relative;
         margin: auto;
@@ -111,6 +118,7 @@
         margin-right: 10%;
         border: dashed;
         border-spacing: 5px 40px !important;
+        line-height: 12px;
       }
 
       .pear {
@@ -132,9 +140,9 @@
   </head>
   <body background="bgText3.jpg">
 
-    <h1>A Pictures Worth a Thousand Regex Characters</h1>
+    <h1>A Picture's Worth a Thousand Regex Characters</h1>
 
-    <p>Drag and drop an image into the dropzone</a>. <br> The pixel values of the image determine the word choice selected from the text of Issac Asimov's short story, "The Last Question", and the regex characters used to construct an image of text.</p>
+    <p>Drag and drop an image into the dropzone</a>. <br> The pixel values of the image determine the word choice selected from the text of Isaac Asimov's short story, "The Last Question", and the regex characters used to construct an image of text.</p>
 
   </body>
 </html>
