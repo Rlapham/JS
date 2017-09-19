@@ -43,6 +43,10 @@ function preload() {
 
 
 function setup() {
+  dropZone = createDiv('Drop imgs here twice!');
+  dropZone.id('drop_zone');
+  // When the user drags a file over the div
+  dropZone.dragOver(highlight);
   var c = createCanvas((window.innerWidth*.5), (window.innerHeight*.5));
   c.class('canvas');
   background(240);
@@ -70,10 +74,6 @@ function setup() {
   ///original///
   // This link allows quick testing with a file
   // that's ready to load instantly
-  dropZone = createDiv('');
-  dropZone.id('drop_zone');
-  // When the user drags a file over the div
-  dropZone.dragOver(highlight);
   // dropZone.drop(gotFile, unHighlight);
  //   // Not using this event in this example
  //   // dropZone.dragLeave(someHandler);
@@ -122,7 +122,7 @@ function gotFile(file) {
   setTimeout(function(){
     loadPixels();
     image(img, 0, 0, width, height);
-    for (var i = 0; i < width*height*4; i+=100) {
+    for (var i = 0; i < width*height*4; i+=25) {
       if(pixels[i] < 230 || pixels[i] > 250){
         // console.log("r", pixels[i]);
         // console.log("g", pixels[i] + 1);
@@ -162,32 +162,32 @@ function storeRegex(regexRGB){
 function drawRegex(){
   ///max 765
   for (i = 0; i < regexStore.length; i++){
-    if (regexStore[i] < 100){
+    if (regexStore[i] < 100 && regexStore[i] > 0){
+      drawStore = append(drawStore, "     ");
+    }
+    if (regexStore[i] < 200 && regexStore[i] > 100){
       drawStore = append(drawStore, "  ");
     }
-    if (regexStore[i] < 200){
+    if (regexStore[i] < 300 && regexStore[i] > 200){
       drawStore = append(drawStore, " ");
     }
-    if (regexStore[i] > 300){
+    if (regexStore[i] < 400 && regexStore[i] > 300){
       drawStore = append(drawStore, ".");
     }
-    if (regexStore[i] < 400){
+    if (regexStore[i] < 500 && regexStore[i] > 400){
       drawStore = append(drawStore, "~");
     }
-    if (regexStore[i] < 500){
-      drawStore = append(drawStore, "!");
+    if (regexStore[i] < 600 && regexStore[i] > 500){
+      drawStore = append(drawStore, "o");
     }
-    if (regexStore[i] < 600){
-      drawStore = append(drawStore, "()");
-    }
-    if (regexStore[i] < 500){
+    if (regexStore[i] < 500 && regexStore[i] > 400){
       drawStore = append(drawStore, "*");
     }
-    if (regexStore[i] < 600){
-      drawStore = append(drawStore, "%");
+    if (regexStore[i] < 600 && regexStore[i] > 500){
+      drawStore = append(drawStore, "&");
     }
     if (regexStore[i] > 600){
-      drawStore = append(drawStore, "#");
+      drawStore = append(drawStore, "##");
     }
   }
   console.log(drawStore);
