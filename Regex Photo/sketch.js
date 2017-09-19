@@ -122,7 +122,7 @@ function gotFile(file) {
   setTimeout(function(){
     loadPixels();
     image(img, 0, 0, width, height);
-    for (var i = 0; i < width*height*4; i+=35) {
+    for (var i = 0; i < width*height*4; i+=10) {
       if(pixels[i] < 230 || pixels[i] > 250){
         // console.log("r", pixels[i]);
         // console.log("g", pixels[i] + 1);
@@ -175,19 +175,19 @@ function drawRegex(){
       drawStore = append(drawStore, "o");
     }
     if (regexStore[i] < 500 && regexStore[i] > 400){
-      drawStore = append(drawStore, "~");
+      drawStore = append(drawStore, "^");
     }
     if (regexStore[i] < 600 && regexStore[i] > 500){"."
-      drawStore = append(drawStore, ".");
+      drawStore = append(drawStore, "~");
     }
     if (regexStore[i] < 500 && regexStore[i] > 400){" "
-      drawStore = append(drawStore, " ");
+      drawStore = append(drawStore, "-");
     }
     if (regexStore[i] < 600 && regexStore[i] > 500){"  "
-      drawStore = append(drawStore, "  ");
+      drawStore = append(drawStore, ".");
     }
     if (regexStore[i] > 600){
-      drawStore = append(drawStore, "     ");
+      drawStore = append(drawStore, " ");
     }
   }
   console.log(drawStore);
