@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Regex Img</title>
+    <script src="libraries/p5.js" type="text/javascript"></script>
+    <script src="libraries/p5.dom.js" type="text/javascript"></script>
+    <script src="libraries/p5.sound.js" type="text/javascript"></script>
+    <script src="libraries/rita-full.js" /></script>
+    <script src="libraries/randexp.min.js" type="text/javascript"></script>
+
+    <script src="sketch.js" type="text/javascript"></script>
+    <script src="libraries/dom-to-image.min.js" />
+
+    <script>
+      domtoimage.toPng(node)
+    </script>
+
+    <style>
+      body {
+        padding: 20px;
+        background-image: url("bgText3.jpg");
+        weight: 600;
+        text-size: 28pt;
+        color: #ffffff;
+      }
+
+      h1{
+      text-align: center;
+      font-family: "Helvetica";
+      color: #ffffff;
+	     font-size: 24px;
+	     font-style: normal;
+	     font-variant: normal;
+	     font-weight: 500;
+	      line-height: 26.4px;
+     }
+     p{
+     text-align: center;
+     font-family: "Helvetica";
+     color: #ffffff;
+     font-size: 16px;
+     font-style: normal;
+     font-variant: normal;
+     font-weight: 300;
+      line-height: 26.4px;
+    }
+
+    p2 {
+      text-align: center;
+      font-family: "Helvetica";
+      color: #ffffff;
+      font-size: 20px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: 300;
+      line-height: 26.4px;
+
+    }
+
+
+      .canvas{
+        position: relative;
+        display: block;
+        top: 200px;
+        width: 100%;
+        padding-left: 25%;
+        padding-right: 25%;*/
+        margin-left: 25%;
+        margin-right: 25%;
+      }
+
+      .file {
+        position: absolute;
+        top: 100px;
+        padding-left: 20%;
+        font-weight: bold;
+      }
+
+      .text {
+        position: absolute;
+        border-style: solid;
+        border-width: 1px;
+        padding: 20px;
+      }
+
+      #drop_zone {
+        position: absolute;
+        display: block;
+        padding: 0px;
+        border-style: dotted;
+        top: 13%;
+        width: 20%;
+        height: 100px;
+        margin-left: 40%;
+        margin-right: 40%;
+        text-align: center;
+        background: grey;
+        z-index: 999;
+      }
+
+      .drawing{
+        position: relative;
+        margin: auto;
+        width: 80%;
+        top: 200px;
+        padding: 20px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        margin-left: 10%;
+        margin-right: 10%;
+        border: dashed;
+        border-spacing: 5px 40px !important;
+      }
+
+      .pear {
+        position: relative;
+        margin: auto;
+        width: 80%;
+        top: 200px;
+        padding: 20px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        margin-left: 10%;
+        margin-right: 10%;
+        border: dashed;
+        border-spacing: 5px 40px !important;
+      }
+
+    </style>
+
+  </head>
+  <body background="bgText3.jpg">
+
+    <h1>A Pictures Worth a Thousand Regex Characters</h1>
+
+    <p>Drag and drop an image into the dropzone</a>. <br> The pixel values of the image determine the word choice selected from the text of Issac Asimov's short story, "The Last Question", and the regex characters used to construct an image of text.</p>
+
+  </body>
+</html>
