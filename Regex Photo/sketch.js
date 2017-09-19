@@ -122,7 +122,7 @@ function gotFile(file) {
   setTimeout(function(){
     loadPixels();
     image(img, 0, 0, width, height);
-    for (var i = 0; i < width*height*4; i+=25) {
+    for (var i = 0; i < width*height*4; i+=35) {
       if(pixels[i] < 230 || pixels[i] > 250){
         // console.log("r", pixels[i]);
         // console.log("g", pixels[i] + 1);
@@ -163,31 +163,31 @@ function drawRegex(){
   ///max 765
   for (i = 0; i < regexStore.length; i++){
     if (regexStore[i] < 100 && regexStore[i] > 0){
-      drawStore = append(drawStore, "     ");
+      drawStore = append(drawStore, "#");
     }
-    if (regexStore[i] < 200 && regexStore[i] > 100){
-      drawStore = append(drawStore, "  ");
+    if (regexStore[i] < 200 && regexStore[i] > 100){"&"
+      drawStore = append(drawStore, "&");
     }
-    if (regexStore[i] < 300 && regexStore[i] > 200){
-      drawStore = append(drawStore, " ");
+    if (regexStore[i] < 300 && regexStore[i] > 200){"*"
+      drawStore = append(drawStore, "*");
     }
-    if (regexStore[i] < 400 && regexStore[i] > 300){
-      drawStore = append(drawStore, ".");
+    if (regexStore[i] < 400 && regexStore[i] > 300){"o"
+      drawStore = append(drawStore, "o");
     }
     if (regexStore[i] < 500 && regexStore[i] > 400){
       drawStore = append(drawStore, "~");
     }
-    if (regexStore[i] < 600 && regexStore[i] > 500){
-      drawStore = append(drawStore, "o");
+    if (regexStore[i] < 600 && regexStore[i] > 500){"."
+      drawStore = append(drawStore, ".");
     }
-    if (regexStore[i] < 500 && regexStore[i] > 400){
-      drawStore = append(drawStore, "*");
+    if (regexStore[i] < 500 && regexStore[i] > 400){" "
+      drawStore = append(drawStore, " ");
     }
-    if (regexStore[i] < 600 && regexStore[i] > 500){
-      drawStore = append(drawStore, "&");
+    if (regexStore[i] < 600 && regexStore[i] > 500){"  "
+      drawStore = append(drawStore, "  ");
     }
     if (regexStore[i] > 600){
-      drawStore = append(drawStore, "##");
+      drawStore = append(drawStore, "     ");
     }
   }
   console.log(drawStore);
