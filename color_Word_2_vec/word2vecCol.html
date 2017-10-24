@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - buffergeometry [particles]</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				/*color: #cccccc;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;*/
+
+				background-color: #050505;
+				margin: 0px;
+				overflow: hidden;
+				touch-action: none;
+			}
+
+			/*#info {
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+			}*/
+
+			a {
+				color: #0080ff;
+			}
+			#topBar {
+				position: relative;
+				display: block;
+				top: 0px;
+				width: 100%;
+				height: 200px;
+				background-color: "#2b2b2b";
+				z-index: 10;
+			}
+
+			#circleOne {
+				position: relative;
+				float: left;
+				top: -090px;
+				width: 10%;
+				height: 150px;
+				left: 10%;
+			  border-radius: 40px;
+			  background-color: #FFFFFF;
+				z-index: -100;
+			}
+			#circleTwo {
+				position: relative;
+				float: left;
+				top: -090px;
+				width: 10%;
+				height: 150px;
+				left: 20%;
+				border-radius: 40px;
+				background-color: #FFFFFF;
+				z-index: -100;
+			}
+			#circleThree {
+				position: relative;
+				float: left;
+				top: -090px;
+				width: 10%;
+				height: 150px;
+				left: 30%;
+				border-radius: 40px;
+				background-color: #FFFFFF;
+				z-index: -100;
+			}
+			#circleFour {
+				position: relative;
+				float: left;
+				top: -090px;
+				width: 10%;
+				height: 150px;
+				left: 40%;
+				border-radius: 40px;
+				background-color: #FFFFFF;
+				z-index: -100;
+			}
+			#plus{
+				position: relative;
+				float: left;
+				font-family: Monospace;
+				font-size: 300%;
+				text-align: center;
+				color: #FFFFFF;
+				top: -35px;
+    		left: -16%;
+				z-index: -100;
+			}
+			#plus2{
+				position: relative;
+				float: left;
+				font-family: Monospace;
+				font-size: 300%;
+				text-align: center;
+				color: #FFFFFF;
+				top: -35px;
+				left: 22%;
+				z-index: -100;
+			}
+			#as{
+				position: relative;
+				float: left;
+				font-family: Monospace;
+				font-size: 200%;
+				text-align: center;
+				color: #FFFFFF;
+				top: -30px;
+				left: 0%;
+				z-index: -100;
+			}
+		</style>
+	</head>
+	<body>
+
+		<!-- <div id="container"></div> -->
+		<div id="topBar"></div>
+		<div id="circleOne"></div>
+		<div id="circleTwo"></div>
+		<div id="circleThree"></div>
+		<div id="circleFour"></div>
+		<div id="plus">~></div>
+		<div id="plus2">~></div>
+		<div id="as">AS</div>
+
+
+
+		<script src="build/three.js"></script>
+		<!-- <script src="js/controls/OrbitControls.js"></script> -->
+		<!-- <script src="js/Detector.js"></script> -->
+		<script src="js/libs/stats.min.js"></script>
+		<script src="js/controls/DragControls.js"></script>
+		<script src="js/controls/TrackballControls.js"></script>
+		<script src="js/THREEx.KeyboardState.js"></script>
+
+
+		<script>
+
+			// if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container, stats;
+			let colInput;
+
+			var camera, control, scene, renderer;
+
+			var raycaster;
+			var intersects;
+
+			var mouse = new THREE.Vector2(), INTERSECTED;
+			var radius = 10, theta = 0;
+
+			var objects = [];
+
+			var points;
+
+			let cols = {};
+			let colorData;
+			let colors = {};
+			let request;
+			let selectCol;
+			let selectName;
+			let selectPos;
+			let store1;
+			let store2;
+			let store3;
+			let storeN1;
+			let storeN2;
+			let storeN3;
+			let storeP1;
+			let storeP2;
+			let storeP3;
+			let firstClose;
+			let firstCloseH;
+
+			// colInput = createInput('your name');
+
+
+			var url = 'colData.json';
+			request = new XMLHttpRequest();
+			request.onload = function(e) {
+				var myArr = JSON.parse(request.responseText);
+				var temp = request.responseText; // not responseText
+				colorData = myArr;
+			}
+			request.open("GET", url);
+			request.responseType = 'text';
+			request.send();
+
+			////color
+			setTimeout(function(){ processCol();}, 000);
+			/////
+
+			init();
+			animate();
+
+			function init() {
+				///wrap init in timeout of 0
+				setTimeout(function(){
+
+				///dom
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				// container = document.getElementById( 'container' );
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 2, 3500 );
+				camera.position.x = 1000;
+				camera.position.y = -300;
+				camera.position.z = -1500;
+
+				// controls = new THREE.OrbitControls( camera );
+				// controls.target.set( 0, 0, 0 );
+				// controls.update();
+
+				controls = new THREE.TrackballControls( camera );
+				controls.rotateSpeed = 1.0;
+				controls.zoomSpeed = 1.2;
+				controls.panSpeed = 0.8;
+				controls.noZoom = false;
+				controls.noPan = false;
+				controls.staticMoving = true;
+				controls.dynamicDampingFactor = 0.3;
+				controls.target.set( 0, 0, 0 );
+
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( "#FAFAFA" );
+				// scene.fog = new THREE.Fog( "#FFFEFD", 2000, 1000 );
+
+				///lights
+				scene.add( new THREE.AmbientLight( 0x505050 ) );
+				var light = new THREE.SpotLight( 0xffffff, 1.5 );
+								light.position.set( 0, 500, 0 );
+								light.castShadow = true;
+								light.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 50, 1, 200, 10000 ) );
+								light.shadow.bias = - 0.00022;
+								light.shadow.mapSize.width = 2048;
+								light.shadow.mapSize.height = 2048;
+								scene.add( light );
+				var light2 = new THREE.SpotLight( 0xffffff, 1.5 );
+								light2.position.set( 0, 0, -2000 );
+								light2.castShadow = true;
+								light2.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 50, 1, 200, 10000 ) );
+								light2.shadow.bias = - 0.00022;
+								light2.shadow.mapSize.width = 2048;
+								light2.shadow.mapSize.height = 2048;
+								scene.add( light2 );
+				var light3 = new THREE.SpotLight( 0xffffff, 1.5 );
+								light3.position.set( 0, -500, 0 );
+								light3.castShadow = true;
+								light3.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 50, 1, 200, 10000 ) );
+								light3.shadow.bias = - 0.00022;
+								light3.shadow.mapSize.width = 2048;
+								light3.shadow.mapSize.height = 2048;
+								scene.add( light3 );
+				var light4 = new THREE.SpotLight( 0xffffff, 1.5 );
+								light4.position.set( 0, 0, 2000 );
+								light4.castShadow = true;
+								light4.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 50, 1, 200, 10000 ) );
+								light4.shadow.bias = - 0.00022;
+								light4.shadow.mapSize.width = 2048;
+								light4.shadow.mapSize.height = 2048;
+								scene.add( light4 );
+
+				///cubes
+				var geometry = new THREE.BoxGeometry( 20, 20, 20 );
+				var boxes = 948;
+
+
+				for ( var i = 0; i < boxes; i ++ ) {
+					var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colorData.colors[i].hex } ) );
+
+					var x = colors[i].x;
+					var y = colors[i].y;
+					var z = colors[i].z;
+
+					object.position.x = x;
+					object.position.y = y + 150;
+					object.position.z = z;
+
+					object.userdata = {color: colorData.colors[i].color, hex: colorData.colors[i].hex, x: object.position.x, y: object.position.y, z: object.position.z};
+					// console.log(object.userdata);
+
+
+					// object.rotation.x = Math.random() * 2 * Math.PI;
+					// object.rotation.y = Math.random() * 2 * Math.PI;
+					// object.rotation.z = Math.random() * 2 * Math.PI;
+					object.scale.x = Math.random() * 2 + 1;
+					object.scale.y = Math.random() * 2 + 1;
+					object.scale.z = Math.random() * 2 + 1;
+
+					// object.userData;
+
+
+
+					object.castShadow = true;
+					object.receiveShadow = true;
+					scene.add( object );
+					objects.push( object );
+				}
+
+
+				raycaster = new THREE.Raycaster();
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				// renderer.setClearColor( scene.fog.color );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				container.appendChild( renderer.domElement );
+
+				// renderer.shadowMap.enabled = true;
+				renderer.shadowMap.type = THREE.PCFShadowMap;
+
+				var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
+				dragControls.addEventListener( 'dragstart', function ( event ) { controls.enabled = false; } );
+				dragControls.addEventListener( 'dragend', function ( event ) { controls.enabled = true; } );
+
+				stats = new Stats();
+				container.appendChild( stats.dom );
+				container.appendChild( renderer.domElement );
+
+				document.addEventListener("keydown", onDocumentKeyDown, false);
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+
+			}, 10); ///end timeout
+			} ///end init
+
+			function onDocumentMouseMove( event ) {
+
+				event.preventDefault();
+				//
+				// mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				// mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				// setTimeout(function(){
+				render();
+				stats.update();
+			// }, 00); ///end timeout
+
+			}
+
+			function render() {
+				///dragable
+				controls.update();
+				///spin
+				// setTimeout(function(){
+			// 	var time = Date.now() * 0.001;
+			// 	points.rotation.x = time * 0.25;
+			// 	points.rotation.y = time * 0.5;
+			// }, 1000); ///end timeout
+				///end spin
+
+				///mouse interaction
+				theta += 0.1;
+				// camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+				// camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+				// camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+				// camera.lookAt( scene.position );
+				// camera.updateMatrixWorld();
+				////find intersections
+				raycaster.setFromCamera( mouse, camera );
+				intersects = raycaster.intersectObjects( scene.children );
+				// window.location = intersects[0];
+				// console.log(intersects);
+
+				if ( intersects.length > 0 ) {
+					if ( INTERSECTED != intersects[ 0 ].object ) {
+						// console.log(INTERSECTED);
+						console.log(intersects);
+
+					// 	if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+						INTERSECTED = intersects[ 0 ].object;
+						selectCol = INTERSECTED.userdata.hex;
+						selectName = INTERSECTED.userdata.color;
+						selectPos = new THREE.Vector3(INTERSECTED.userdata.x, INTERSECTED.userdata.y, INTERSECTED.userdata.z);
+						console.log(INTERSECTED.userdata);
+						// console.log(INTERSECTED);
+						console.log(selectPos);
+
+					// 	INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+					// 	INTERSECTED.material.emissive.setHex( 0xff0000 );
+					}
+				}
+				// else {
+				// 	if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+				// 	INTERSECTED = null;
+				// }
+				renderer.render( scene, camera );
+			}
+
+			function onDocumentKeyDown(event) {
+				var keyCode = event.which;
+				if (keyCode == 16) {		///shift
+				    console.log("shift");
+						circleOne.style.backgroundColor= selectCol;
+						store1 = selectCol;
+						storeN1 = selectName;
+						storeP1 = selectPos;
+				} else if (keyCode == 90) { //z
+						console.log("shift");
+						circleTwo.style.backgroundColor= selectCol;
+						store2 = selectCol;
+						storeN2 = selectName;
+						storeP2 = selectPos;
+
+				} else if (keyCode == 88) { //x
+						console.log("shift");
+						circleThree.style.backgroundColor= selectCol;
+						store3 = selectCol;
+						storeN3 = selectName;
+						storeP3 = selectPos;
+
+						console.log(storeN1, store1, storeP1, storeN2, store2, storeP2, storeN3, store3, storeP3);
+						// console.log(colorToVector(storeP1));
+						// console.log(colorData);
+
+						let a_to_b = storeP1.sub(storeP2);
+						// console.log(colors['pink']);
+						// console.log(a_to_b);
+						// console.log(a_to_b.add(storeP3));
+						console.log(closest(a_to_b.add(storeP3)));
+						circleFour.style.backgroundColor= firstCloseH;
+						console.log(firstCloseN);
+						// console.log(firstCloseH);
+
+			};
+		}
+
+
+			////////// color
+			function processCol(){
+				prepData();
+				// console.log(colors);
+				//
+				// console.log(colorData);
+
+				// let d1 = distance(colors['red'], colors['green']);
+				// let d2 = distance(colors['red'], colors['pink']);
+
+
+				// console.log(d1, d2);
+				// console.log(d1 > d2);
+				// console.log(closest(colors['red']));
+
+				// let v = colorToVector(new THREE.Color(150, 60, 150));
+				// console.log(closest(v));
+
+				let v1 = colors['purple'];
+				let v2 = colors['red'];
+				console.log(v1);
+				console.log(closest(v1.sub(v2)));
+
+				let v3 = colors['blue'];
+				let v4 = colors['green'];
+				console.log(closest(v3.add(v4)));
+
+				// let colorList = [colors['black'], colors['white']];
+				// console.log(colorList);
+				// console.log(closest(meanV(colorList)));
+			}
+
+
+			function colorToVector(col) {
+				return new THREE.Vector3(col.r, col.g, col.b);
+			}
+
+			function vectorToColor(v) {
+				return new THREE.Color(v.x, v.y, v.z);
+			}
+
+
+			function closest(colorVector, limit = 10) {
+
+				let keys = Object.keys(colors);
+				console.log(colorVector);
+				let closest = [];
+
+				// New ES6 arrow syntax!!!!!
+				keys.sort((a, b) => {
+					let d1 = distance(colorVector, colors[a]);
+					let d2 = distance(colorVector, colors[b]);
+					return d1 - d2;
+				});
+
+				for (let i = 0; i < limit; i++) {
+					closest.push(colors[keys[i]].name);
+					firstCloseN = colors[keys[0]].name;
+					firstCloseH = colors[keys[0]].hex;
+
+				}
+				return closest;
+			}
+
+			function prepData() {
+				for (let i = 0; i < colorData.colors.length; i++) {
+					let key = colorData.colors[i].color;
+					let keyH = colorData.colors[i].hex;
+					let threeColor = new THREE.Color(colorData.colors[i].hex);
+					// console.log(threeColor);
+					let value = new THREE.Vector3((threeColor.r * 255), (threeColor.g * 255), (threeColor.b * 255));
+					value.x = THREE.Math.mapLinear(value.x, 0, 255, -250, 250);
+					value.y = THREE.Math.mapLinear(value.y, 0, 255, -250, 250);
+					value.z = THREE.Math.mapLinear(value.z, 0, 255, -250, 250);
+					colors[i] = value;
+					colors[i].name = key;
+					colors[i].hex = keyH;
+					// console.log(colors);
+				}
+			}
+
+			function distance(color1, color2) {
+				return color1.distanceTo( color2 );
+			}
+
+			function meanV(vectors) {
+				var temp1 = vectors[0];
+				var temp2 = vectors[1];
+				var tempX = temp1.add(temp2);
+				var tX = tempX.x/vectors.length;
+				var tY = tempX.y/vectors.length;
+				var tZ = tempX.z/vectors.length;
+				let sumv = new THREE.Vector3(tX, tY, tZ);
+				// console.log(sumv);
+				return sumv;
+			}
+
+		</script>
+
+	</body>
+</html>
