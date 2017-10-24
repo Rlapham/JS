@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - buffergeometry [particles]</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				/*color: #cccccc;*/
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+
+				background-color: #050505;
+				margin: 0px;
+				overflow: hidden;
+			}
+			a {
+				color: #0080ff;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="container"></div>
+
+		<script src="build/three.js"></script>
+		<script src="js/controls/OrbitControls.js"></script>
+
+		<script src="js/Detector.js"></script>
+		<script src="js/libs/stats.min.js"></script>
+
+		<script>
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container, stats;
+
+			var camera, scene, renderer;
+
+			var points;
+
+			let cols = {};
+			let colorData;
+			let colors = {};
+			let request;
+
+			var url = 'colData.json';
+			request = new XMLHttpRequest();
+			request.onload = function(e) {
+				var myArr = JSON.parse(request.responseText);
+				var temp = request.responseText; // not responseText
+				colorData = myArr;
+			}
+			request.open("GET", url);
+			request.responseType = 'text';
+			request.send();
+
+			////color
+			// setTimeout(function(){ processCol();}, 000);
+			/////
+
+			init();
+			animate();
+
+			function init() {
+				///wrap init in timeout of 0
+				// setTimeout(function(){
+				container = document.getElementById( 'container' );
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 5, 3500 );
+				camera.position.z = 1000;
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.Fog( 0x050505, 2000, 3500 );
+
+				// var particles = colorData.colors.length;
+
+				var particles = 1000;
+
+				var geometry = new THREE.BufferGeometry();
+
+				var positions = new Float32Array( particles * 3 );
+				var colorsCube = new Float32Array( particles * 3 );
+
+				var color = new THREE.Color();
+
+				var n = 5000, n2 = n / 2; // particles spread in the cube
+
+				// console.log(colors[7].x);
+				// console.log(colorData.colors[0].color);
+				// console.log(colorData.colors[0].hex);
+
+				// for ( var i = 0; i < colorData.colors.length; i ++) {
+					for ( var i = 0; i < positions.length; i +=3) {
+
+					// positions
+
+					var x = Math.random() * n - n2;
+					var y = Math.random() * n - n2;
+					var z = Math.random() * n - n2;
+					// var x = colors[i].x;
+					// var y = colors[i].y;
+					// var z = colors[i].z;
+
+					positions[ i ]     = x;
+					positions[ i + 1 ] = y;
+					positions[ i + 2 ] = z;
+
+					// colors
+
+					var vx = ( x / n ) + 0.5;
+					var vy = ( y / n ) + 0.5;
+					var vz = ( z / n ) + 0.5;
+
+					color.setRGB( vx, vy, vz );
+
+					colorsCube[ i ] = color.r;
+					colorsCube[ i ] = color.g;
+					colorsCube[ i ] = color.b;
+
+				}
+
+
+				geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+				geometry.addAttribute( 'color', new THREE.BufferAttribute( colors, 3 ) );
+				geometry.computeBoundingSphere();
+
+				var material = new THREE.PointsMaterial( { size: 50, vertexColors: THREE.VertexColors } );
+
+				points = new THREE.Points( geometry, material );
+				scene.add( points );
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setClearColor( scene.fog.color );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				container.appendChild( renderer.domElement );
+
+
+				window.addEventListener( 'resize', onWindowResize, false );
+				stats = new Stats();
+				container.appendChild( stats.dom );
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			// }, 1000); ///end timeout
+
+			} ///end init
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				// setTimeout(function(){
+				render();
+				stats.update();
+			// }, 3000); ///end timeout
+
+			}
+
+			function render() {
+				///spin
+				// var time = Date.now() * 0.001;
+				// points.rotation.x = time * 0.25;
+				// points.rotation.y = time * 0.5;
+				///end spin
+
+				renderer.render( scene, camera );
+
+			}
+
+			function onDocumentMouseMove( event ) {
+
+				event.preventDefault();
+
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2+ 1;
+
+			}
+
+			////////// color
+			function processCol(){
+				prepData();
+				// console.log(colors);
+
+				// let d1 = distance(colors['red'], colors['green']);
+				// let d2 = distance(colors['red'], colors['pink']);
+
+
+				// console.log(d1, d2);
+				// console.log(d1 > d2);
+				// console.log(closest(colors['red']));
+
+				// let v = colorToVector(new THREE.Color(150, 60, 150));
+				// console.log(closest(v));
+
+				// let v1 = colors['purple'];
+				// let v2 = colors['red'];
+				// console.log(closest(v1.sub(v2)));
+
+				// let v3 = colors['blue'];
+				// let v4 = colors['green'];
+				// console.log(closest(v3.add(v4)));
+
+				// let colorList = [colors['black'], colors['white']];
+				// console.log(colorList);
+				// console.log(closest(meanV(colorList)));
+			}
+
+
+			function colorToVector(col) {
+				return new THREE.Vector3(col.r, col.g, col.b);
+			}
+
+			function vectorToColor(v) {
+				return new THREE.Color(v.x, v.y, v.z);
+			}
+
+
+			function closest(colorVector, limit = 10) {
+
+				let keys = Object.keys(colors);
+				let closest = [];
+
+				// New ES6 arrow syntax!!!!!
+				keys.sort((a, b) => {
+					let d1 = distance(colorVector, colors[a]);
+					let d2 = distance(colorVector, colors[b]);
+					return d1 - d2;
+				});
+
+				for (let i = 0; i < limit; i++) {
+					closest.push(keys[i]);
+				}
+				return closest;
+			}
+
+			function prepData() {
+				for (let i = 0; i < colorData.colors.length; i++) {
+					let key = colorData.colors[i].color;
+					let threeColor = new THREE.Color(colorData.colors[i].hex);
+					// console.log(threeColor);
+					let value = new THREE.Vector3((threeColor.r * 255), (threeColor.g * 255), (threeColor.b * 255));
+					colors[i] = value;
+
+				}
+			}
+
+			function distance(color1, color2) {
+				return color1.distanceTo( color2 );
+			}
+
+			function meanV(vectors) {
+				var temp1 = vectors[0];
+				var temp2 = vectors[1];
+				var tempX = temp1.add(temp2);
+				var tX = tempX.x/vectors.length;
+				var tY = tempX.y/vectors.length;
+				var tZ = tempX.z/vectors.length;
+				let sumv = new THREE.Vector3(tX, tY, tZ);
+				// console.log(sumv);
+				return sumv;
+			}
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - Simple text from json</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				/*color: #ffffff;
+				background-color: #000000;*/
+					margin: 0px;
+					overflow: hidden;
+				}
+			}
+			/*#info {
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;*/
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+
+		<script src="build/three.js"></script>
+		<script src="js/controls/OrbitControls.js"></script>
+		<script src="js/Detector.js"></script>
+		<script src="js/libs/stats.min.js"></script>
+
+		<!-- <script type="x-shader/x-vertex" id="vertexshader">
+
+			attribute float size;
+			attribute vec3 customColor;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				vColor = customColor;
+
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+				gl_PointSize = size * ( 300.0 / -mvPosition.z );
+
+				gl_Position = projectionMatrix * mvPosition;
+
+			}
+
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+
+			uniform vec3 color;
+			uniform sampler2D texture;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				gl_FragColor = vec4( color * vColor, 1.0 );
+
+				gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
+
+				if ( gl_FragColor.a < ALPHATEST ) discard;
+
+			}
+
+		</script> -->
+
+		<script>
+
+			var camera, scene, renderer;
+
+			let cols = {};
+			let colorData;
+			let colors = {};
+			let request;
+
+			var url = 'colData.json';
+			request = new XMLHttpRequest();
+			request.onload = function(e) {
+				var myArr = JSON.parse(request.responseText);
+				var temp = request.responseText; // not responseText
+				colorData = myArr;
+				console.log(colorData);
+			}
+			request.open("GET", url);
+			request.responseType = 'text';
+			request.send();
+
+
+			init();
+			animate();
+
+
+			function init( ) {
+
+				container = document.getElementById( 'container' );
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 3500 );
+				camera.position.z = 2750;
+
+
+				var controls = new THREE.OrbitControls( camera );
+				controls.target.set( 0, 0, 0 );
+				controls.update();
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( "#ffffff" );
+				scene.fog = new THREE.Fog( 0x050505, 2000, 3500 );
+
+
+				////
+				setTimeout(function(){ processCol()}, 000);
+				/////
+
+
+				// ///cube
+				// var particles = 500000;
+				// var geometry = new THREE.BufferGeometry();
+				// var interleaved_buffer_float32 = new Float32Array( particles * 4 );
+				// var interleaved_buffer_uint8 = new Uint8Array( interleaved_buffer_float32.buffer );
+				// var color = new THREE.Color();
+				// var n = 1000, n2 = n / 2; // particles spread in the cube
+				//
+				// for ( var i = 0; i < interleaved_buffer_float32.length; i += 4 ) {
+				//
+				// 	// positions
+				// 	var x = Math.random() * n - n2;
+				// 	var y = Math.random() * n - n2;
+				// 	var z = Math.random() * n - n2;
+				// 	interleaved_buffer_float32[ i + 0 ] = x;
+				// 	interleaved_buffer_float32[ i + 1 ] = y;
+				// 	interleaved_buffer_float32[ i + 2 ] = z;
+				//
+				// 	// colors
+				// 	var vx = ( x / n ) + 0.5;
+				// 	var vy = ( y / n ) + 0.5;
+				// 	var vz = ( z / n ) + 0.5;
+				// 	color.setRGB( vx, vy, vz );
+				// 	var j = ( i + 3 ) * 4;
+				// 	interleaved_buffer_uint8[ j + 0 ] = color.r * 255;
+				// 	interleaved_buffer_uint8[ j + 1 ] = color.g * 255;
+				// 	interleaved_buffer_uint8[ j + 2 ] = color.b * 255;
+				// 	interleaved_buffer_uint8[ j + 3 ] = 0;
+				// }
+				//
+				// var ibp = new THREE.InterleavedBuffer( interleaved_buffer_float32, 4 );
+				// var ibc = new THREE.InterleavedBuffer( interleaved_buffer_uint8, 16 );
+				// geometry.addAttribute( 'position', new THREE.InterleavedBufferAttribute( ibp, 3, 0, false ) );
+				// geometry.addAttribute( 'color', new THREE.InterleavedBufferAttribute( ibc, 3, 12, true ) );
+				//
+				// // geometry.computeBoundingSphere();
+				// //
+				// var material = new THREE.PointsMaterial( { size: 15, vertexColors: THREE.VertexColors } );
+				// points = new THREE.Points( geometry, material );
+				// scene.add( points );
+				//
+				// //
+				// renderer = new THREE.WebGLRenderer( { antialias: false } );
+				// renderer.setPixelRatio( window.devicePixelRatio );
+				// renderer.setSize( window.innerWidth, window.innerHeight );
+				// container.appendChild( renderer.domElement );
+				// //
+				// stats = new Stats();
+				// container.appendChild( stats.dom );
+				// //
+				// window.addEventListener( 'resize', onWindowResize, false );
+				// ///end cube
+
+				///text
+				// var loader = new THREE.FontLoader();
+				// loader.load( 'fonts/helvetiker_regular.typeface.json', function ( font ) {
+				//
+				// 	var xMid, text;
+				//
+				// 	var textShape = new THREE.BufferGeometry();
+				//
+				// 	var color = 0x006699;
+				//
+				// 	var matDark = new THREE.LineBasicMaterial( {
+				// 		color: color,
+				// 		side: THREE.DoubleSide
+				// 	} );
+				//
+				// 	var matLite = new THREE.MeshBasicMaterial( {
+				// 		color: color,
+				// 		transparent: true,
+				// 		opacity: 0.4,
+				// 		side: THREE.DoubleSide
+				// 	} );
+				//
+				// 	var message = "   Three.js\nSimple text.";
+				//
+				// 	var shapes = font.generateShapes( message, 100, 2 );
+				//
+				// 	var geometry = new THREE.ShapeGeometry( shapes );
+				//
+				// 	geometry.computeBoundingBox();
+				//
+				// 	xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
+				//
+				// 	geometry.translate( xMid, 0, 0 );
+				//
+				// 	// make shape ( N.B. edge view not visible )
+				//
+				// 	textShape.fromGeometry( geometry );
+				//
+				// 	text = new THREE.Mesh( textShape, matLite );
+				// 	text.position.z = - 150;
+				// 	scene.add( text );
+				//
+				// 	// make line shape ( N.B. edge view remains visible )
+				//
+				// 	var holeShapes = [];
+				//
+				// 	for ( var i = 0; i < shapes.length; i ++ ) {
+				//
+				// 		var shape = shapes[ i ];
+				//
+				// 		if ( shape.holes && shape.holes.length > 0 ) {
+				//
+				// 			for ( var j = 0; j < shape.holes.length; j ++ ) {
+				//
+				// 				var hole = shape.holes[ j ];
+				// 				holeShapes.push( hole );
+				//
+				// 			}
+				//
+				// 		}
+				//
+				// 	}
+				//
+				// 	shapes.push.apply( shapes, holeShapes );
+				//
+				// 	var lineText = new THREE.Object3D();
+				//
+				// 	for ( var i = 0; i < shapes.length; i ++ ) {
+				//
+				// 		var shape = shapes[ i ];
+				//
+				// 		var lineGeometry = shape.createPointsGeometry();
+				//
+				// 		lineGeometry.translate( xMid, 0, 0 );
+				//
+				// 		var lineMesh = new THREE.Line( lineGeometry, matDark );
+				// 		lineText.add( lineMesh );
+				//
+				// 	}
+				//
+				// 	scene.add( lineText );
+				//
+				// } ); //end load function
+				///end text
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			} // end init
+
+			function onDocumentMouseMove( event ) {
+
+				event.preventDefault();
+
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			}
+
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+			//
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+				stats.update();
+			}
+			function render() {
+				var time = Date.now() * 0.001;
+				points.rotation.x = time * 0.25;
+				points.rotation.y = time * 0.5;
+				renderer.render( scene, camera );
+			}
+
+
+
+			////////// color
+			function processCol(){
+				prepData();
+				console.log(colors);
+
+				let d1 = distance(colors['red'], colors['green']);
+				let d2 = distance(colors['red'], colors['pink']);
+
+
+				console.log(d1, d2);
+			  console.log(d1 > d2);
+			  console.log(closest(colors['red']));
+
+				let v = colorToVector(new THREE.Color(150, 60, 150));
+				console.log(closest(v));
+
+				let v1 = colors['purple'];
+				let v2 = colors['red'];
+				console.log(closest(v1.sub(v2)));
+
+				let v3 = colors['blue'];
+				let v4 = colors['green'];
+				console.log(closest(v3.add(v4)));
+
+				let colorList = [colors['black'], colors['white']];
+				console.log(colorList);
+				console.log(closest(meanV(colorList)));
+			}
+			//////////
+
+
+			function colorToVector(col) {
+			  return new THREE.Vector3(col.r, col.g, col.b);
+			}
+
+			function vectorToColor(v) {
+			  return new THREE.Color(v.x, v.y, v.z);
+			}
+
+
+			function closest(colorVector, limit = 10) {
+
+			  let keys = Object.keys(colors);
+			  let closest = [];
+
+			  // New ES6 arrow syntax!!!!!
+			  keys.sort((a, b) => {
+			    let d1 = distance(colorVector, colors[a]);
+			    let d2 = distance(colorVector, colors[b]);
+			    return d1 - d2;
+			  });
+
+			  for (let i = 0; i < limit; i++) {
+			    closest.push(keys[i]);
+			  }
+			  return closest;
+			}
+
+			function prepData() {
+			  for (let i = 0; i < colorData.colors.length; i++) {
+			    let key = colorData.colors[i].color;
+			    let threeColor = new THREE.Color(colorData.colors[i].hex);
+					// console.log(threeColor);
+			    let value = new THREE.Vector3((threeColor.r * 255), (threeColor.g * 255), (threeColor.b * 255));
+			    colors[key] = value;
+			  }
+			}
+
+			function distance(color1, color2) {
+			  return color1.distanceTo( color2 );
+			}
+
+			function meanV(vectors) {
+				var temp1 = vectors[0];
+				var temp2 = vectors[1];
+				var tempX = temp1.add(temp2);
+				var tX = tempX.x/vectors.length;
+				var tY = tempX.y/vectors.length;
+				var tZ = tempX.z/vectors.length;
+				let sumv = new THREE.Vector3(tX, tY, tZ);
+				console.log(sumv);
+				return sumv;
+			}
+
+		</script>
+
+	</body>
+</html>
